@@ -1,6 +1,13 @@
 ---
-# handlers file for wdijkerman.zabbix
+# handlers file for zabbix-server
 
-- name: zabbix-server restarted
-  service: name=zabbix-server state=restarted enabled=yes
-  tags: zabbix-server
+- name: start zabbix-server
+  service:
+    name=zabbix-server
+    state=started
+    enabled=yes
+
+- name: restart zabbix-server
+  service:
+    name=zabbix-server
+    state=restarted

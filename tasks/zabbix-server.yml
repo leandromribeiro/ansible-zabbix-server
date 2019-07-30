@@ -1,0 +1,16 @@
+---
+- hosts: localhost
+  gather_facts: yes
+  sudo_user: root
+  vars_files:
+#    - 'defaults/postgresql.yml'
+    - '~/zabbix-server-ansible/defaults/zabbix.yml'
+    - '~/zabbix-server-ansible/defaults/main.yml'
+#    - 'defaults/httpd.yml'
+  tasks:
+    - include: '~/zabbix-server-ansible/tasks/main.yml'
+  handlers:
+    - include: '~/zabbix-server-ansible/handlers/main.yml'
+  #vars_prompt:
+  #    #ip_httpd: "On what IP should apache run? "
+  #    #    install_method: "Do you want to install from online or offline sources (online/offline) ?"

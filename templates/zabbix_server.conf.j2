@@ -1,305 +1,310 @@
-# this is a configuration file for zabbix server process
-# to get more information about zabbix, visit http://www.zabbix.com
+#{{ ansible_managed }}
 
-############ general parameters #################
-### option: listenport
-#	listen port for trapper.
+### Option: ListenPort
+#	Listen port for trapper.
 #
-ListenPort={{ zabbix_server_listenport }}
+# Mandatory: no
+# Range: 1024-32767
+# Default:
+# ListenPort=10051
+ListenPort={{zbx_server_ListenPort}}
 
-### option: sourceip
-#	source ip address for outgoing connections.
-#
-{% if zabbix_server_sourceip is defined and zabbix_server_sourceip %}
-SourceIP={{ zabbix_server_sourceip }}
-{% endif %}
-
-{% if zabbix_version is version('3.0', '>=') %}
-### Option: LogType
-#	Specifies where log messages are written to:
-#		system  - syslog
-#		file    - file specified with LogFile parameter
-#		console - standard output
+### Option: SourceIP
+#	Source IP address for outgoing connections.
 #
 # Mandatory: no
 # Default:
-LogType={{ zabbix_server_logtype }}
+{% if zbx_server_SourceIP %}
+SourceIP={{zbx_server_SourceIP}}
+{% else %}
+# SourceIP=
 {% endif %}
 
-### option: logfile
-#	name of log file.
-#	if not set, syslog is used.
+### Option: LogFile
+#	Name of log file.
+#	If not set, syslog is used.
 #
-LogFile={{ zabbix_server_logfile }}
+# Mandatory: no
+# Default:
+{% if zbx_server_LogFile %}
+LogFile={{zbx_server_LogFile}}
+{% else %}
+# LogFile=
+{% endif %}
 
-### option: logfilesize
-#	maximum size of log file in mb.
+
+### Option: LogFileSize
+#	Maximum size of log file in MB.
 #	0 - disable automatic log rotation.
 #
-LogFileSize={{ zabbix_server_logfilesize }}
+# Mandatory: no
+# Range: 0-1024
+# Default:
+# LogFileSize=1
 
-### option: debuglevel
-#	specifies debug level
+LogFileSize={{zbx_server_LogFileSize}}
+
+### Option: DebugLevel
+#	Specifies debug level
 #	0 - no debug
 #	1 - critical information
 #	2 - error information
 #	3 - warnings
 #	4 - for debugging (produces lots of information)
 #
-DebugLevel={{ zabbix_server_debuglevel }}
+# Mandatory: no
+# Range: 0-4
+# Default:
+DebugLevel={{zbx_server_DebugLevel}}
 
-### Option: SocketDir
-#	IPC socket directory.
-#       Directory to store IPC sockets used by internal Zabbix services.
+### Option: PidFile
+#	Name of PID file.
 #
 # Mandatory: no
 # Default:
-# SocketDir=/tmp
+# PidFile=/tmp/zabbix_server.pid
 
-{% if zabbix_version is version('3.4', '>=') %}
-SocketDir={{ zabbix_server_socketdir }}
-{% endif %}
+PidFile={{zbx_server_PidFile}}
 
-### option: pidfile
-#	name of pid file.
-#
-PidFile={{ zabbix_server_pidfile }}
-
-### option: dbhost
-#	database host name.
-#	if set to localhost, socket is used for mysql.
-#	if set to empty string, socket is used for postgresql.
-#
-DBHost={{ zabbix_server_dbhost }}
-
-### option: dbname
-#	database name.
-#	for sqlite3 path to database file must be provided. dbuser and dbpassword are ignored.
-#
-DBName={{ zabbix_server_dbname }}
-
-### option: dbschema
-#	schema name. used for ibm db2.
-#
-{% if zabbix_server_dbschema is defined and zabbix_server_dbschema %}
-DBSchema={{ zabbix_server_dbschema }}
-{% endif %}
-
-### option: dbuser
-#	database user. ignored for sqlite.
-#
-DBUser={{ zabbix_server_dbuser }}
-
-### option: dbpassword
-#	database password. ignored for sqlite.
-#	comment this line if no password is used.
-#
-DBPassword={{ zabbix_server_dbpassword }}
-
-### option: dbsocket
-#	path to mysql socket.
-#
-{% if zabbix_server_dbsocket is defined and zabbix_server_dbsocket %}
-DBSocket={{ zabbix_server_dbsocket }}
-{% endif %}
-
-### option: dbport
-#	database port when not using local socket. ignored for sqlite.
-#
-{% if zabbix_server_dbport is defined and zabbix_server_dbport %}
-DBPort={{ zabbix_server_dbport }}
-{% endif %}
-
-### Option: HistoryStorageURL
-#	History storage HTTP[S] URL.
+### Option: DBHost
+#	Database host name.
+#	If set to localhost, socket is used for MySQL.
+#	If set to empty string, socket is used for PostgreSQL.
 #
 # Mandatory: no
 # Default:
-{% if zabbix_server_historystorageurl is defined and zabbix_server_historystorageurl %}
-HistoryStorageURL={{ zabbix_server_historystorageurl }}
-{% endif %}
+DBHost={{zbx_server_DBHost}}
 
-{% if zabbix_version is version('3.4', '>=') %}
-### Option: HistoryStorageTypes
-#	Comma separated list of value types to be sent to the history storage.
+### Option: DBName
+#	Database name.
+#	For SQLite3 path to database file must be provided. DBUser and DBPassword are ignored.
+#
+# Mandatory: yes
+# Default:
+# DBName=
+
+DBName={{zbx_server_DBName}}
+
+### Option: DBSchema
+#	Schema name. Used for IBM DB2.
 #
 # Mandatory: no
 # Default:
-HistoryStorageTypes={{ zabbix_server_historystoragetypes }}
+{% if zbx_server_DBSchema %}
+DBSchema={{zbx_server_DBSchema}}
+{% else %}
+# DBSchema=
 {% endif %}
 
-{% if zabbix_version is version('4.0', '>=') %}
-### Option: HistoryStorageDateIndex
-#	Enable preprocessing of history values in history storage to store values in different indices based on date.
-#	0 - disable
-#	1 - enable
+### Option: DBUser
+#	Database user. Ignored for SQLite.
 #
 # Mandatory: no
 # Default:
-HistoryStorageDateIndex={{ zabbix_server_historystoragedateindex }}
-{% endif %}
+# DBUser=
 
-{% if zabbix_version is version('4.0', '>=') %}
-### Option: ExportDir
-#	Directory for real time export of events, history and trends in newline delimited JSON format.
-#	If set, enables real time export.
+DBUser={{zbx_server_DBUser}}
+
+### Option: DBPassword
+#	Database password. Ignored for SQLite.
+#	Comment this line if no password is used.
 #
 # Mandatory: no
 # Default:
-{% if zabbix_server_exportdir is defined and zabbix_server_exportdir %}
-ExportDir={{ zabbix_server_exportdir }}
-{% endif %}
-{% endif %}
+# DBPassword=
+DBPassword={{zbx_server_DBPassword}}
 
-{% if zabbix_version is version('4.0', '>=') %}
-### Option: ExportFileSize
-#	Maximum size per export file in bytes.
-#	Only used for rotation if ExportDir is set.
+### Option: DBSocket
+#	Path to MySQL socket.
 #
 # Mandatory: no
-# Range: 1M-1G
 # Default:
-ExportFileSize={{ zabbix_server_exportfilesize }}
-{% endif %}
-############ advanced parameters ################
+# DBSocket=/tmp/mysql.sock
 
-### option: startpollers
-#	number of pre-forked instances of pollers.
-#
-StartPollers={{ zabbix_server_startpollers }}
+DBSocket={{zbx_server_DBSocket}}
 
-### option: startipmipollers
-#	number of pre-forked instances of ipmi pollers.
-#
-StartIPMIPollers={{ zabbix_server_startipmipollers }}
-
-### option: startpollersunreachable
-#	number of pre-forked instances of pollers for unreachable hosts (including ipmi).
-#
-StartPollersUnreachable={{ zabbix_server_startpollersunreachable }}
-
-### option: starttrappers
-#	number of pre-forked instances of trappers.
-#	trappers accept incoming connections from zabbix sender, active agents, active proxies and child nodes.
-#	at least one trapper process must be running to display server availability in the frontend.
-#
-StartTrappers={{ zabbix_server_starttrappers }}
-
-### option: startpingers
-#	number of pre-forked instances of icmp pingers.
-#
-StartPingers={{ zabbix_server_startpingers }}
-
-### option: startdiscoverers
-#	number of pre-forked instances of discoverers.
-#
-StartDiscoverers={{ zabbix_server_startdiscoverers }}
-
-### option: starthttppollers
-#	number of pre-forked instances of http pollers.
-#
-StartHTTPPollers={{ zabbix_server_starthttppollers }}
-
-{% if zabbix_version is version_compare('2.0', '>=') %}
-### option: starttimers
-#	number of pre-forked instances of timers.
-#	timers process time-based trigger functions and maintenance periods.
-#	only the first timer process handles the maintenance periods.
-#
-StartTimers={{ zabbix_server_starttimers }}
-{% endif %}
-
-{% if zabbix_version is version_compare('3.0', '>=') %}
-### Option: StartEscalators
-#   Number of pre-forked instances of escalators.
-#
-StartEscalators={{ zabbix_server_startescalators }}
-{% endif %}
-
-### option: javagateway
-#	ip address (or hostname) of zabbix java gateway.
-#	only required if java pollers are started.
-#
-{% if zabbix_server_javagateway is defined and zabbix_server_javagateway %}
-JavaGateway={{ zabbix_server_javagateway }}
-
-### option: javagatewayport
-#	port that zabbix java gateway listens on.
-#
-JavaGatewayPort={{ zabbix_server_javagatewayport }}
-
-### option: startjavapollers
-#	number of pre-forked instances of java pollers.
-#
-StartJavaPollers={{ zabbix_server_startjavapollers }}
-{% endif  %}
-
-{% if zabbix_version is version_compare('2.2', '>=') %}
-### option: startvmwarecollectors
-#	number of pre-forked vmware collector instances.
-#
-StartVMwareCollectors={{ zabbix_server_startvmwarecollectors }}
-
-### option: vmwarefrequency
-#	how often zabbix will connect to vmware service to obtain a new data.
-#
-VMwareFrequency={{ zabbix_server_vmwarefrequency }}
-
-{% if zabbix_version is version_compare('3.0', '>=') %}
-### Option: VMwarePerfFrequency
-#       How often Zabbix will connect to VMware service to obtain performance data.
+### Option: DBPort
+#	Database port when not using local socket. Ignored for SQLite.
 #
 # Mandatory: no
-VMwarePerfFrequency={{ zabbix_server_vmwareperffrequency }}
+# Range: 1024-65535
+# Default (for MySQL):
+{% if zbx_server_DBPort %}
+DBPort={{zbx_server_DBPort}}
+{% else %}
+# DBPort=3306
 {% endif %}
 
-### option: vmwarecachesize
-#	size of vmware cache, in bytes.
-#	shared memory size for storing vmware data.
-#	only used if vmware collectors are started.
-#
-VMwareCacheSize={{ zabbix_server_vmwarecachesize }}
-{% endif  %}
+############ ADVANCED PARAMETERS ################
 
-{% if zabbix_version is version_compare('3.0', '>=') %}
-### Option: VMwareTimeout
-#       Specifies how many seconds vmware collector waits for response from VMware service.
+### Option: StartPollers
+#	Number of pre-forked instances of pollers.
 #
-VMwareTimeout={{ zabbix_server_vmwaretimeout }}
+# Mandatory: no
+# Range: 0-1000
+# Default:
+StartPollers={{zbx_server_StartPollers}}
+
+### Option: StartIPMIPollers
+#	Number of pre-forked instances of IPMI pollers.
+#
+# Mandatory: no
+# Range: 0-1000
+# Default:
+{% if zbx_server_StartIPMIPollers %}
+StartIPMIPollers={{zbx_server_StartIPMIPollers}}
+{% else %}
+# StartIPMIPollers=0
 {% endif %}
 
-### option: snmptrapperfile
-#	temporary file used for passing data from snmp trap daemon to the server.
-#	must be the same as in zabbix_trap_receiver.pl or snmptt configuration file.
+### Option: StartPollersUnreachable
+#	Number of pre-forked instances of pollers for unreachable hosts (including IPMI).
 #
-SNMPTrapperFile={{ zabbix_server_snmptrapperfile }}
+# Mandatory: no
+# Range: 0-1000
+# Default:
+StartPollersUnreachable={{zbx_server_StartPollersUnreachable}}
 
-### option: startsnmptrapper
-#	if 1, snmp trapper process is started.
+### Option: StartTrappers
+#	Number of pre-forked instances of trappers.
+#	Trappers accept incoming connections from Zabbix sender, active agents, active proxies and child nodes.
+#	At least one trapper process must be running to display server availability in the frontend.
 #
-StartSNMPTrapper={{ zabbix_server_startsnmptrapper }}
+# Mandatory: no
+# Range: 0-1000
+# Default:
+StartTrappers={{zbx_server_StartTrappers}}
 
-### option: listenip
-#	list of comma delimited ip addresses that the trapper should listen on.
-#	trapper will listen on all network interfaces if this parameter is missing.
+### Option: StartPingers
+#	Number of pre-forked instances of ICMP pingers.
 #
-{% if zabbix_server_listenip is defined and zabbix_server_listenip %}
-ListenIP={{ zabbix_server_listenip }}
+# Mandatory: no
+# Range: 0-1000
+# Default:
+StartPingers={{zbx_server_StartPingers}}
+
+### Option: StartDiscoverers
+#	Number of pre-forked instances of discoverers.
+#
+# Mandatory: no
+# Range: 0-250
+# Default:
+StartDiscoverers={{zbx_server_StartDiscoverers}}
+
+### Option: StartHTTPPollers
+#	Number of pre-forked instances of HTTP pollers.
+#
+# Mandatory: no
+# Range: 0-1000
+# Default:
+StartHTTPPollers={{zbx_server_StartHTTPPollers}}
+
+### Option: StartTimers
+#	Number of pre-forked instances of timers.
+#	Timers process time-based trigger functions and maintenance periods.
+#	Only the first timer process handles the maintenance periods.
+#
+# Mandatory: no
+# Range: 1-1000
+# Default:
+StartTimers={{zbx_server_StartTimers}}
+
+### Option: JavaGateway
+#	IP address (or hostname) of Zabbix Java gateway.
+#	Only required if Java pollers are started.
+#
+# Mandatory: no
+# Default:
+{% if zbx_server_JavaGateway %}
+JavaGateway={{zbx_server_JavaGateway}}
+{% else %}
+# JavaGateway=
 {% endif %}
 
-### option: housekeepingfrequency
+### Option: JavaGatewayPort
+#	Port that Zabbix Java gateway listens on.
+#
+# Mandatory: no
+# Range: 1024-32767
+# Default:
+JavaGatewayPort={{zbx_server_JavaGatewayPort}}
+
+### Option: StartJavaPollers
+#	Number of pre-forked instances of Java pollers.
+#
+# Mandatory: no
+# Range: 0-1000
+# Default:
+StartJavaPollers={{zbx_server_StartJavaPollers}}
+
+### Option: StartVMwareCollectors
+#	Number of pre-forked vmware collector instances.
+#
+# Mandatory: no
+# Range: 0-250
+# Default:
+StartVMwareCollectors={{zbx_server_StartVMwareCollectors}}
+
+### Option: VMwareFrequency
+#	How often Zabbix will connect to VMware service to obtain a new data.
+#
+# Mandatory: no
+# Range: 10-86400
+# Default:
+VMwareFrequency={{zbx_server_VMwareFrequency}}
+
+### Option: VMwareCacheSize
+#	Size of VMware cache, in bytes.
+#	Shared memory size for storing VMware data.
+#	Only used if VMware collectors are started.
+#
+# Mandatory: no
+# Range: 256K-2G
+# Default:
+VMwareCacheSize={{zbx_server_VMwareCacheSize}}
+
+### Option: SNMPTrapperFile
+#	Temporary file used for passing data from SNMP trap daemon to the server.
+#	Must be the same as in zabbix_trap_receiver.pl or SNMPTT configuration file.
+#
+# Mandatory: no
+# Default:
+# SNMPTrapperFile=/tmp/zabbix_traps.tmp
+
+SNMPTrapperFile={{zbx_server_SNMPTrapperFile}}
+
+### Option: StartSNMPTrapper
+#	If 1, SNMP trapper process is started.
+#
+# Mandatory: no
+# Range: 0-1
+# Default:
+StartSNMPTrapper={{zbx_server_StartSNMPTrapper}}
+
+### Option: ListenIP
+#	List of comma delimited IP addresses that the trapper should listen on.
+#	Trapper will listen on all network interfaces if this parameter is missing.
+#
+# Mandatory: no
+# Default:
+{% if zbx_server_ListenIP %}
+ListenIP={{zbx_server_ListenIP}}
+{% else %}
+# ListenIP=0.0.0.0
+# ListenIP=127.0.0.1
+{% endif %}
+
+
+### Option: HousekeepingFrequency
 #	How often Zabbix will perform housekeeping procedure (in hours).
-#	Housekeeping is removing outdated information from the database.
-#	To prevent Housekeeper from being overloaded, no more than 4 times HousekeepingFrequency
-#	hours of outdated information are deleted in one housekeeping cycle, for each item.
-#	To lower load on server startup housekeeping is postponed for 30 minutes after server start.
-#	With HousekeepingFrequency=0 the housekeeper can be only executed using the runtime control option.
-#	In this case the period of outdated information deleted in one housekeeping cycle is 4 times the
-#	period since the last housekeeping cycle, but not less than 4 hours and not greater than 4 days.
+#	Housekeeping is removing unnecessary information from history, alert, and alarms tables.
 #
-HousekeepingFrequency={{ zabbix_server_housekeepingfrequency }}
+# Mandatory: no
+# Range: 1-24
+# Default:
+HousekeepingFrequency={{zbx_server_HousekeepingFrequency}}
 
-### option: maxhousekeeperdelete
+### Option: MaxHousekeeperDelete
 #	The table "housekeeper" contains "tasks" for housekeeping procedure in the format:
 #	[housekeeperid], [tablename], [field], [value].
 #	No more than 'MaxHousekeeperDelete' rows (corresponding to [tablename], [field], [value])
@@ -307,271 +312,292 @@ HousekeepingFrequency={{ zabbix_server_housekeepingfrequency }}
 #	SQLite3 does not use this parameter, deletes all corresponding rows without a limit.
 #	If set to 0 then no limit is used at all. In this case you must know what you are doing!
 #
-MaxHousekeeperDelete={{ zabbix_server_maxhousekeeperdelete }}
+# Mandatory: no
+# Range: 0-1000000
+# Default:
+MaxHousekeeperDelete={{zbx_server_MaxHousekeeperDelete}}
 
-{% if zabbix_version is version_compare('3.2', '<=') %}
-### option: senderfrequency
-#	how often zabbix will try to send unsent alerts (in seconds).
+### Option: SenderFrequency
+#	How often Zabbix will try to send unsent alerts (in seconds).
 #
-SenderFrequency={{ zabbix_server_senderfrequency }}
+# Mandatory: no
+# Range: 5-3600
+# Default:
+SenderFrequency={{zbx_server_SenderFrequency}}
+
+### Option: CacheSize
+#	Size of configuration cache, in bytes.
+#	Shared memory size for storing host, item and trigger data.
+#
+# Mandatory: no
+# Range: 128K-2G
+# Default:
+CacheSize={{zbx_server_CacheSize}}
+
+### Option: CacheUpdateFrequency
+#	How often Zabbix will perform update of configuration cache, in seconds.
+#
+# Mandatory: no
+# Range: 1-3600
+# Default:
+CacheUpdateFrequency={{zbx_server_CacheUpdateFrequency}}
+
+### Option: StartDBSyncers
+#	Number of pre-forked instances of DB Syncers
+#
+# Mandatory: no
+# Range: 1-100
+# Default:
+StartDBSyncers={{zbx_server_StartDBSyncers}}
+
+### Option: HistoryCacheSize
+#	Size of history cache, in bytes.
+#	Shared memory size for storing history data.
+#
+# Mandatory: no
+# Range: 128K-2G
+# Default:
+HistoryCacheSize={{zbx_server_HistoryCacheSize}}
+
+### Option: TrendCacheSize
+#	Size of trend cache, in bytes.
+#	Shared memory size for storing trends data.
+#
+# Mandatory: no
+# Range: 128K-2G
+# Default:
+TrendCacheSize={{zbx_server_TrendCacheSize}}
+
+### Option: HistoryTextCacheSize
+#	Size of text history cache, in bytes.
+#	Shared memory size for storing character, text or log history data.
+#
+# Mandatory: no
+# Range: 128K-2G
+# Default:
+HistoryTextCacheSize={{zbx_server_HistoryTextCacheSize}}
+
+### Option: ValueCacheSize
+#	Size of history value cache, in bytes.
+#	Shared memory size for caching item history data requests
+#	Setting to 0 disables value cache.
+#
+# Mandatory: no
+# Range: 0,128K-64G
+# Default:
+ValueCacheSize={{zbx_server_ValueCacheSize}}
+
+### Option: Timeout
+#	Specifies how long we wait for agent, SNMP device or external check (in seconds).
+#
+# Mandatory: no
+# Range: 1-30
+# Default:
+Timeout={{zbx_server_Timeout}}
+
+### Option: TrapperTimeout
+#	Specifies how many seconds trapper may spend processing new data.
+#
+# Mandatory: no
+# Range: 1-300
+# Default:
+TrapperTimeout={{zbx_server_TrapperTimeout}}
+
+### Option: UnreachablePeriod
+#	After how many seconds of unreachability treat a host as unavailable.
+#
+# Mandatory: no
+# Range: 1-3600
+# Default:
+UnreachablePeriod={{zbx_server_UnreachablePeriod}}
+
+### Option: UnavailableDelay
+#	How often host is checked for availability during the unavailability period, in seconds.
+#
+# Mandatory: no
+# Range: 1-3600
+# Default:
+UnavailableDelay={{zbx_server_UnavailableDelay}}
+
+### Option: UnreachableDelay
+#	How often host is checked for availability during the unreachability period, in seconds.
+#
+# Mandatory: no
+# Range: 1-3600
+# Default:
+UnreachableDelay={{zbx_server_UnreachableDelay}}
+
+### Option: AlertScriptsPath
+#	Full path to location of custom alert scripts.
+#	Default depends on compilation options.
+#
+# Mandatory: no
+# Default:
+# AlertScriptsPath=${datadir}/zabbix/alertscripts
+
+AlertScriptsPath={{zbx_server_AlertScriptsPath}}
+
+### Option: ExternalScripts
+#	Full path to location of external scripts.
+#	Default depends on compilation options.
+#
+# Mandatory: no
+# Default:
+# ExternalScripts=${datadir}/zabbix/externalscripts
+
+ExternalScripts={{zbx_server_ExternalScripts}}
+
+### Option: FpingLocation
+#	Location of fping.
+#	Make sure that fping binary has root ownership and SUID flag set.
+#
+# Mandatory: no
+# Default:
+FpingLocation={{zbx_server_FpingLocation}}
+
+### Option: Fping6Location
+#	Location of fping6.
+#	Make sure that fping6 binary has root ownership and SUID flag set.
+#	Make empty if your fping utility is capable to process IPv6 addresses.
+#
+# Mandatory: no
+# Default:
+Fping6Location={{zbx_server_Fping6Location}}
+
+### Option: SSHKeyLocation
+#	Location of public and private keys for SSH checks and actions.
+#
+# Mandatory: no
+# Default:
+{% if zbx_server_SSHKeyLocation %}
+SSHKeyLocation={{zbx_server_SSHKeyLocation}}
+{% else %}
+# SSHKeyLocation=
 {% endif %}
 
-### option: cachesize
-#	size of configuration cache, in bytes.
-#	shared memory size for storing host, item and trigger data.
-#
-CacheSize={{ zabbix_server_cachesize }}
-
-### option: cacheupdatefrequency
-#	how often zabbix will perform update of configuration cache, in seconds.
-#
-CacheUpdateFrequency={{ zabbix_server_cacheupdatefrequency }}
-
-### option: startdbsyncers
-#	number of pre-forked instances of db syncers
-#
-StartDBSyncers={{ zabbix_server_startdbsyncers }}
-
-### option: historycachesize
-#	size of history cache, in bytes.
-#	shared memory size for storing history data.
-#
-HistoryCacheSize={{ zabbix_server_historycachesize }}
-
-{% if zabbix_version is version_compare('3.0', '>=') %}
-### Option: HistoryIndexCacheSize
-#       Size of history index cache, in bytes.
-#       Shared memory size for indexing history cache.
-#
-HistoryIndexCacheSize={{ zabbix_server_historyindexcachesize }}
-{% endif %}
-
-### option: trendcachesize
-#	size of trend cache, in bytes.
-#	shared memory size for storing trends data.
-#
-TrendCacheSize={{ zabbix_server_trendcachesize }}
-
-{% if zabbix_version is version_compare('3.0', '<') %}
-    ### option: historytextcachesize
-#	size of text history cache, in bytes.
-#	shared memory size for storing character, text or log history data.
-#
-HistoryTextCacheSize={{ zabbix_server_historytextcachesize }}
-{% endif %}
-
-{% if zabbix_version is version_compare('2.2', '>=') %}
-### option: valuecachesize
-#	size of history value cache, in bytes.
-#	shared memory size for caching item history data requests
-#	setting to 0 disables value cache.
-#
-ValueCacheSize={{ zabbix_server_valuecachesize }}
-{% endif %}
-
-{% if zabbix_version is version_compare('2.4', '<') %}
-### option: nodenoevents
-#	if set to '1' local events won't be sent to master node.
-#	this won't impact ability of this node to propagate events from its child nodes.
-#
-NodeNoEvents={{ zabbix_server_nodenoevents }}
-
-### option: nodenohistory
-#	if set to '1' local history won't be sent to master node.
-#	this won't impact ability of this node to propagate history from its child nodes.
-#
-NodeNoHistory={{ zabbix_server_nodenohistory }}
-{% endif %}
-
-### option: timeout
-#	specifies how long we wait for agent, snmp device or external check (in seconds).
-#
-Timeout={{ zabbix_server_timeout }}
-
-### option: trappertimeout
-#	specifies how many seconds trapper may spend processing new data.
-#
-TrapperTimeout={{ zabbix_server_trappertimeout }}
-
-### option: unreachableperiod
-#	after how many seconds of unreachability treat a host as unavailable.
-#
-UnreachablePeriod={{ zabbix_server_unreachableperiod }}
-
-### option: unavailabledelay
-#	how often host is checked for availability during the unavailability period, in seconds.
-#
-UnavailableDelay={{ zabbix_server_unavailabledelay }}
-
-### option: unreachabledelay
-#	how often host is checked for availability during the unreachability period, in seconds.
-#
-UnreachableDelay={{ zabbix_server_unreachabledelay }}
-
-### option: alertscriptspath
-#	full path to location of custom alert scripts.
-#	default depends on compilation options.
-#
-AlertScriptsPath={{ zabbix_server_alertscriptspath }}
-
-### option: externalscripts
-#	full path to location of external scripts.
-#	default depends on compilation options.
-#
-ExternalScripts={{ zabbix_server_externalscriptspath }}
-
-### option: fpinglocation
-#	location of fping.
-#	make sure that fping binary has root ownership and suid flag set.
-#
-FpingLocation={{ zabbix_server_fpinglocation }}
-
-### option: fping6location
-#	location of fping6.
-#	make sure that fping6 binary has root ownership and suid flag set.
-#	make empty if your fping utility is capable to process ipv6 addresses.
-#
-Fping6Location={{ zabbix_server_fping6location }}
-
-### option: sshkeylocation
-#	location of public and private keys for ssh checks and actions.
-#
-{% if zabbix_server_sshkeylocation is defined and zabbix_server_sshkeylocation %}
-SSHKeyLocation={{ zabbix_server_sshkeylocation }}
-{% endif %}
-
-### option: logslowqueries
-#	how long a database query may take before being logged (in milliseconds).
-#	only works if debuglevel set to 3 or 4.
+### Option: LogSlowQueries
+#	How long a database query may take before being logged (in milliseconds).
+#	Only works if DebugLevel set to 3 or 4.
 #	0 - don't log slow queries.
 #
-LogSlowQueries={{ zabbix_server_logslowqueries }}
+# Mandatory: no
+# Range: 1-3600000
+# Default:
+LogSlowQueries={{zbx_server_LogSlowQueries}}
 
-### option: tmpdir
-#	temporary directory.
+### Option: TmpDir
+#	Temporary directory.
 #
-TmpDir={{ zabbix_server_tmpdir }}
+# Mandatory: no
+# Default:
+TmpDir={{zbx_server_TmpDir}}
 
-### option: startproxypollers
-#	number of pre-forked instances of pollers for passive proxies.
+### Option: StartProxyPollers
+#	Number of pre-forked instances of pollers for passive proxies.
 #
-StartProxyPollers={{ zabbix_server_startproxypollers }}
+# Mandatory: no
+# Range: 0-250
+# Default:
+StartProxyPollers={{zbx_server_StartProxyPollers}}
 
-### option: proxyconfigfrequency
-#	how often zabbix server sends configuration data to a zabbix proxy in seconds.
-#	this parameter is used only for proxies in the passive mode.
+### Option: ProxyConfigFrequency
+#	How often Zabbix Server sends configuration data to a Zabbix Proxy in seconds.
+#	This parameter is used only for proxies in the passive mode.
 #
-ProxyConfigFrequency={{ zabbix_server_proxyconfigfrequency }}
+# Mandatory: no
+# Range: 1-3600*24*7
+# Default:
+ProxyConfigFrequency={{zbx_server_ProxyConfigFrequency}}
 
-### option: proxydatafrequency
-#	how often zabbix server requests history data from a zabbix proxy in seconds.
-#	this parameter is used only for proxies in the passive mode.
+### Option: ProxyDataFrequency
+#	How often Zabbix Server requests history data from a Zabbix Proxy in seconds.
+#	This parameter is used only for proxies in the passive mode.
 #
-ProxyDataFrequency={{ zabbix_server_proxydatafrequency }}
+# Mandatory: no
+# Range: 1-3600
+# Default:
+ProxyDataFrequency={{zbx_server_ProxyDataFrequency}}
 
-{% if zabbix_version is version_compare('2.2', '>=') %}
-### option: allowroot
-#	allow the server to run as 'root'. if disabled and the server is started by 'root', the server
-#	will try to switch to user 'zabbix' instead. has no effect if started under a regular user.
+### Option: AllowRoot
+#	Allow the server to run as 'root'. If disabled and the server is started by 'root', the server
+#	will try to switch to user 'zabbix' instead. Has no effect if started under a regular user.
 #	0 - do not allow
 #	1 - allow
 #
-AllowRoot={{ zabbix_server_allowroot }}
-{% endif %}
+# Mandatory: no
+# Default:
+AllowRoot={{zbx_server_AllowRoot}}
 
-{% if zabbix_version is version_compare('3.0', '>=') %}
-### Option: User
-#       Drop privileges to a specific, existing user on the system.
-#       Only has effect if run as 'root' and AllowRoot is disabled.
+## Option: User
+#  Drop privileges to a specific, existing user on the system.
+#  Only has effect if run as 'root' and AllowRoot is disabled.
 #
-User={{ zabbix_server_user }}
-{% endif %}
+# Mandatory: no
+# Default:
+# User=zabbix
 
-### option: include
-#	you may include individual files or all files in a directory in the configuration file.
-#	installing zabbix will create include directory in /usr/local/etc, unless modified during the compile time.
-#
-Include={{ zabbix_server_include }}
 
-{% if zabbix_version is version_compare('3.0', '>=') %}
-### Option: SSLCertLocation
-#       Location of SSL client certificates.
-#       This parameter is used only in web monitoring.
+### Option: Include
+#	You may include individual files or all files in a directory in the configuration file.
+#	Installing Zabbix will create include directory in /usr/local/etc, unless modified during the compile time.
 #
-SSLCertLocation={{ zabbix_server_sslcertlocation }}
+# Mandatory: no
+# Default:
+{% for line in zbx_server_Include %}
+Include={line}
+{% else %}
+# Include=
+{% endfor %}
+
+# Include=/usr/local/etc/zabbix_server.general.conf
+# Include=/usr/local/etc/zabbix_server.conf.d/
+
+## Option: SSLCertLocation
+#  Location of SSL client certificates.
+#  This parameter is used only in web monitoring.
+#
+# Mandatory: no
+# Default:
+# SSLCertLocation=${datadir}/zabbix/ssl/certs
 
 ### Option: SSLKeyLocation
-#       Location of private keys for SSL client certificates.
-#       This parameter is used only in web monitoring.
+#  Location of private keys for SSL client certificates.
+#  This parameter is used only in web monitoring.
 #
-SSLKeyLocation={{ zabbix_server_sslkeylocation }}
+# Mandatory: no
+# Default:
+# SSLKeyLocation=${datadir}/zabbix/ssl/keys
 
 ### Option: SSLCALocation
-#       Override the location of certificate authority (CA) files for SSL server certificate verification.
-#       If not set, system-wide directory will be used.
-#       This parameter is used only in web monitoring and SMTP authentication.
-#
-{% if zabbix_server_sslcalocation is defined and zabbix_server_sslcalocation is not none %}
-SSLCALocation={{ zabbix_server_sslcalocation }}
-{% endif %}
-{% endif %}
-
-####### loadable modules #######
-{% if zabbix_version is version_compare('2.2', '>=') %}
-### option: loadmodulepath
-#	full path to location of server modules.
-#	default depends on compilation options.
-#
-LoadModulePath={{ zabbix_server_loadmodulepath }}
-{% endif %}
-
-### option: loadmodule
-#	module to load at server startup. modules are used to extend functionality of the server.
-#	format: loadmodule=<module.so>
-#	the modules must be located in directory specified by loadmodulepath.
-#	it is allowed to include multiple loadmodule parameters.
-#
-{% if zabbix_server_loadmodule is defined and zabbix_server_loadmodule %}
-LoadModule = {{ loadmodule }}
-{% endif %}
-
-{% if zabbix_version is version_compare('3.0', '>=') %}
-####### TLS-RELATED PARAMETERS #######
-
-### Option: TLSCAFile
-#	Full pathname of a file containing the top-level CA(s) certificates for
-#	peer certificate verification.
+#  Override the location of certificate authority (CA) files for SSL server certificate verification.
+#  If not set, system-wide directory will be used.
+#  This parameter is used only in web monitoring.
 #
 # Mandatory: no
 # Default:
-{% if zabbix_server_tlscafile is defined and zabbix_server_tlscafile is not none %}
-TLSCAFile={{ zabbix_server_tlscafile }}
-{% endif %}
+# SSLCALocation=
 
-### Option: TLSCRLFile
-#	Full pathname of a file containing revoked certificates.
+
+####### LOADABLE MODULES #######
+
+### Option: LoadModulePath
+#	Full path to location of server modules.
+#	Default depends on compilation options.
 #
 # Mandatory: no
 # Default:
-{% if zabbix_server_tlscrlfile is defined and zabbix_server_tlscrlfile is not none %}
-TLSCRLFile={{ zabbix_server_tlscrlfile }}
-{% endif %}
+LoadModulePath={{zbx_server_LoadModulePath}}
 
-### Option: TLSCertFile
-#	Full pathname of a file containing the server certificate or certificate chain.
+### Option: LoadModule
+#	Module to load at server startup. Modules are used to extend functionality of the server.
+#	Format: LoadModule=<module.so>
+#	The modules must be located in directory specified by LoadModulePath.
+#	It is allowed to include multiple LoadModule parameters.
 #
 # Mandatory: no
 # Default:
-{% if zabbix_server_tlscertfile is defined and zabbix_server_tlscertfile is not none %}
-TLSCertFile={{ zabbix_server_tlscertfile }}
-{% endif %}
-
-### Option: TLSKeyFile
-#	Full pathname of a file containing the server private key.
-#
-# Mandatory: no
-# Default:
-{% if zabbix_server_tlskeyfile is defined and zabbix_server_tlskeyfile is not none %}
-TLSKeyFile={{ zabbix_server_tlskeyfile }}
-{% endif %}
-{% endif %}
+{% for line in zbx_server_LoadModule %}
+LoadModule={{zbx_server_LoadModule}}
+{% else %}
+# LoadModule=
+{% endfor %}
