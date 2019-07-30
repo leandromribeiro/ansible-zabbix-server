@@ -1,5 +1,5 @@
 ---
-- hosts: localhost
+- hosts: zabbix-server
   gather_facts: yes
   sudo_user: root
   vars_files:
